@@ -9,16 +9,16 @@
 
 ## 기술 스택
 
-| 영역 | 사용 기술 |
-| --- | --- |
-| 프레임워크 | [Apps in Toss / Granite](https://developers-apps-in-toss.toss.im/bedrock/intro.md) (`@apps-in-toss/web-framework`) |
-| UI | React 18 + TypeScript |
+| 영역          | 사용 기술                                                                                                               |
+| ------------- | ----------------------------------------------------------------------------------------------------------------------- |
+| 프레임워크    | [Apps in Toss / Granite](https://developers-apps-in-toss.toss.im/bedrock/intro.md) (`@apps-in-toss/web-framework`)      |
+| UI            | React 18 + TypeScript                                                                                                   |
 | 디자인 시스템 | [TDS Mobile](https://developers-apps-in-toss.toss.im/design/components.md) (`@toss/tds-mobile`, `@toss/tds-mobile-ait`) |
-| 번들러 | Vite 6 |
-| 사운드 | Web Audio API (오디오 파일 없이 파형을 직접 합성) |
-| 저장소 | Apps in Toss `Storage`(사용자별) 우선, 실패 시 `localStorage` 폴백 |
-| 광고 | Apps in Toss `TossAds` 배너 |
-| 코드 품질 | ESLint(`typescript-eslint`, `eslint-plugin-react-hooks`) + Prettier |
+| 번들러        | Vite 6                                                                                                                  |
+| 사운드        | Web Audio API (오디오 파일 없이 파형을 직접 합성)                                                                       |
+| 저장소        | Apps in Toss `Storage`(사용자별) 우선, 실패 시 `localStorage` 폴백                                                      |
+| 광고          | Apps in Toss `TossAds` 배너                                                                                             |
+| 코드 품질     | ESLint(`typescript-eslint`, `eslint-plugin-react-hooks`) + Prettier                                                     |
 
 ## 프로젝트 구조
 
@@ -63,13 +63,15 @@ npm run dev
 
 ## 스크립트
 
-| 명령어 | 설명 |
-| --- | --- |
-| `npm run dev` | 개발 서버 실행 (`granite dev`) |
-| `npm run build` | 웹 번들 + React Native(Android/iOS) 번들 + `.ait` 아티팩트 생성 (`ait build`) |
-| `npm run deploy` | 빌드 산출물을 앱인토스 콘솔에 배포 (`ait deploy`) |
-| `npm run lint` | ESLint 검사 |
-| `npm run format` | Prettier로 코드 포맷 |
+| 명령어           | 설명                                                                          |
+| ---------------- | ----------------------------------------------------------------------------- |
+| `npm run dev`    | 개발 서버 실행 (`granite dev`)                                                |
+| `npm run build`  | 웹 번들 + React Native(Android/iOS) 번들 + `.ait` 아티팩트 생성 (`ait build`) |
+| `npm run deploy` | 빌드 산출물을 앱인토스 콘솔에 배포 (`ait deploy`)                             |
+| `npm run lint`   | ESLint 검사                                                                   |
+| `npm run format` | Prettier로 코드 포맷                                                          |
+
+# 앱인토스
 
 ## 배포하기
 
