@@ -1,17 +1,13 @@
-import { useRef, useState, type PointerEvent as ReactPointerEvent } from "react";
-import { Box } from "./Box";
-import { CapFace } from "./CapFace";
-import { Stem } from "./Stem";
 import {
-  BASE_FACES,
-  DEFAULT_CAP,
-  HOUSING_FACES,
-  capFaces,
-  capGlowColor,
-  type CapStyle,
-} from "../lib/capStyle";
-import { readableText } from "../lib/color";
-import { CAP, CAP_BASE_Y, GAP, HOUSE, PRESS } from "../lib/keycapLayout";
+  memo,
+  useRef,
+  useState,
+  type PointerEvent as ReactPointerEvent,
+} from "react";
+import { Box } from "./Box";
+import { KeycapKey } from "./KeycapKey";
+import { BASE_FACES, DEFAULT_CAP, type CapStyle } from "../lib/capStyle";
+import { GAP, HOUSE } from "../lib/keycapLayout";
 import type { SwitchSpec } from "../lib/switches";
 
 /* ------------------------------------------------------------------ *
@@ -33,7 +29,7 @@ const DRAG_THRESHOLD = 6; // px, 이보다 많이 움직이면 회전(드래그)
 const clamp = (v: number, lo: number, hi: number) =>
   Math.min(hi, Math.max(lo, v));
 
-export function KeycapUnit({
+function KeycapUnitImpl({
   cols,
   rows,
   spec,
@@ -132,88 +128,20 @@ export function KeycapUnit({
           }}
         />
 
-        {positions.map(({ id, x, z }, i) => {
-          const down = pressed.has(id);
-          const cap = caps[i] ?? DEFAULT_CAP;
-          const selected = selectedId === id;
-          const lift = CAP_BASE_Y + (down ? PRESS : 0) - (selected ? 14 : 0);
-          // 글자 모드(sticker null): 직접 입력한 글자 → 없으면 기본 A·S·D·F
-          const content =
-            cap.sticker == null
-              ? cap.text != null && cap.text !== ""
-                ? cap.text
-                : labels[i]
-              : cap.sticker;
-          const isEmoji = cap.sticker != null && cap.sticker !== "";
-          const glowColor = capGlowColor(cap.color, cap.finish);
-          const labelColor =
-            cap.finish === "holo" || cap.finish === "metal"
-              ? "#2b2f36"
-              : readableText(cap.color);
-          return (
-            <div
-              key={id}
-              className="kc-key"
-              data-key={id}
-              role="button"
-              aria-label={labels[i] ?? `키 ${i + 1}`}
-              style={{
-                transform: `translate(-50%, -50%) translateX(${x}px) translateZ(${z}px)`,
-              }}
-            >
-              {/* 투명 스위치 하우징 */}
-              <Box
-                w={HOUSE.w}
-                d={HOUSE.d}
-                h={HOUSE.h}
-                glass
-                radius={6}
-                faces={HOUSING_FACES}
-                topContent={<Stem color={spec.color} />}
-                style={{ transform: "translate(-50%, -50%)" }}
-              />
-              {/* 3D 키캡 (눌리면 하우징 속으로 내려가요) */}
-              <div
-                className="kc-cap-lift"
-                style={{
-                  transform: `translate(-50%, -50%) translateY(${lift}px)`,
-                  transition: `transform ${spec.pressMs}ms ease`,
-                }}
-              >
-                {/* 네온/홀로 언더글로우 — filter가 아닌 별도 요소라 3D가 안 깨져요 */}
-                {glowColor != null && (
-                  <div
-                    className="kc-cap-glow"
-                    style={{
-                      background: `radial-gradient(50% 50% at 50% 50%, ${glowColor}, transparent 70%)`,
-                    }}
-                  />
-                )}
-                <Box
-                  w={CAP.w}
-                  d={CAP.d}
-                  h={CAP.h}
-                  radius={12}
-                  faces={capFaces(cap.color, cap.finish)}
-                  topClassName="kc-captop"
-                  topContent={
-                    cap.face != null ? (
-                      <CapFace design={cap.face} />
-                    ) : (
-                      <span
-                        className={isEmoji ? "kc-cap-emoji" : "kc-cap-label"}
-                        style={{ color: labelColor }}
-                      >
-                        {content}
-                      </span>
-                    )
-                  }
-                  style={{ transform: "translate(-50%, -50%)" }}
-                />
-              </div>
-            </div>
-          );
-        })}
+        {positions.map(({ id, x, z }, i) => (
+          <KeycapKey
+            key={id}
+            id={id}
+            x={x}
+            z={z}
+            label={labels[i] ?? `키 ${i + 1}`}
+            cap={caps[i] ?? DEFAULT_CAP}
+            pressed={pressed.has(id)}
+            selected={selectedId === id}
+            switchColor={spec.color}
+            pressMs={spec.pressMs}
+          />
+        ))}
       </div>
 
       <div className="kc-shadow" style={{ width: totalW + 30 }} />
@@ -256,3 +184,7 @@ export function KeycapUnit({
     </div>
   );
 }
+
+// props가 그대로면(예: bursts/combo 등 무관한 상태 변경) 무거운 3D 트리 전체를
+// 다시 그리지 않도록 감싸요. 실제로 눌린 키 하나만 KeycapKey 레벨에서 갱신돼요.
+export const KeycapUnit = memo(KeycapUnitImpl);
